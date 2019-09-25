@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const base = '../../../../MY_IMAGES';
-
 const readDir = (base, level) => {
   const files = fs.readdirSync(base);
   fs.access('./myDir', err =>{
@@ -44,7 +42,4 @@ const readDir = (base, level) => {
   })
 }
 
-readDir(base, 0);
-
-
-
+readDir(process.argv[2], 0);
