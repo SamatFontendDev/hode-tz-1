@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const baseArg = process.argv[2];
+const levaelArg = process.argv[3];
 
 const readDir = (base, level) => {
   const files = fs.readdirSync(base);
@@ -42,4 +44,4 @@ const readDir = (base, level) => {
   })
 }
 
-readDir(process.argv[2], 0);
+readDir(baseArg , levaelArg);
