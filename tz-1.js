@@ -1,13 +1,18 @@
 const fs = require('fs');
 const path = require('path');
+const rimraf = require('rimraf');
 const baseArg = process.argv[2];
 const levaelArg = process.argv[3];
+const removeSourceArg = process.argv[4];
+const summaryFolderArg = process.argv[5];
 
-const readDir = (base, level) => {
+
+
+const readDir = (base, level, removeSource, summaryFolder) => {
   const files = fs.readdirSync(base);
-  fs.access('./myDir', err =>{
+  fs.access(`${summaryFolder}/myDir`, err => {
     if (err) {
-      fs.mkdir('./myDir', () => {
+      fs.mkdir(`${summaryFolder}/myDir`, () => {
         console.log('myDir created!');
       });
     }
@@ -21,19 +26,20 @@ const readDir = (base, level) => {
     if (state.isDirectory()) {
       readDir(localBase, level + 1);
     } else {
-      fs.access(`./myDir/${dirName}`, (err) => {
+      fs.access(`${summaryFolder}/myDir/${dirName}`, (err) => {
         if (err) {
-          fs.mkdir(`./myDir/${dirName}`, () => {
+          fs.mkdir(`${summaryFolder}/myDir/${dirName}`, () => {
             
-            fs.link(localBase, `./myDir/${dirName}/${item}`, err => {
+            fs.link(localBase, `${summaryFolder}/myDir/${dirName}/${item}`, err => {
               if (err) {
+                console.log(`${summaryFolder}/myDir/${dirName}/${item}`);
                 console.error(24,err.message);
               }
             });
           });
 
          } else {
-          fs.link(localBase, `./myDir/${dirName}/${item}`, err => {
+          fs.link(localBase, `${summaryFolder}/myDir/${dirName}/${item}`, err => {
             if (err) {
               console.error(33,err.message);
             }
@@ -41,7 +47,18 @@ const readDir = (base, level) => {
         }
       });
     }
-  })
+  });
+  if (removeSource) {
+    rimraf(base, (err) => {
+      if (err) {
+        console.error(50, err.message);
+      } else {
+        console.log('source directory deleted!');
+      }
+    });
+  }
 }
 
-readDir(baseArg , levaelArg);
+
+
+readDir(baseArg , levaelArg, removeSourceArg, summaryFolderArg);
